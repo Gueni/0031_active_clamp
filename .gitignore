@@ -1,0 +1,20 @@
+# PLECS autosave / backup files
+*.plecs~
+*.plecs.bak
+*.autosave
+~$*
+
+# Generated code (PLECS Coder)
+*_codegen/
+codegen/
+
+# Ad-hoc scope / ToFile exports in the project root (doc/ is kept)
+/*.csv
+/*.mat
+
+# OS / editor
+Thumbs.db
+desktop.ini
+.DS_Store
+.vscode/
+.idea/

@@ -1,0 +1,1164 @@
+Plecs {
+  Name          "activeClampPrecharge"
+  Version       "4.9"
+  CircuitModel  "ContStateSpace"
+  StartTime     "0.0"
+  TimeSpan      "Tsim"
+  Timeout       ""
+  Solver        "auto"
+  MaxStep       "1e-7"
+  InitStep      "-1"
+  FixedStep     "1e-3"
+  Refine        "1"
+  ZCStepSize    "1e-9"
+  RelTol        "1e-4"
+  AbsTol        "-1"
+  TurnOnThreshold "0"
+  NonIdealSwitchResistance "1"
+  SyncFixedStepTasks "2"
+  UseSingleCommonBaseRate "2"
+  LossVariableLimitExceededMsg "3"
+  NegativeSwitchLossMsg "3"
+  DivisionByZeroMsg "3"
+  DatatypeOverflowMsg "3"
+  DatatypeInheritanceConflictMsg "2"
+  ContSampleTimeConflictMsg "2"
+  StiffnessDetectionMsg "2"
+  MaxConsecutiveZCs "1000"
+  AlgebraicLoopWithStateMachineMsg "3"
+  AssertionAction "1"
+  FixedPointDatatypeOverride "1"
+  InitializationCommands "% Active-clamp forward converter with clamp-capacito"
+"r precharge + soft-start\n\n% Power stage\nVin   = 48;        % input voltage"
+" (V)\nNp    = 2;         % primary turns\nNs    = 1;         % secondary turn"
+"s\nLm    = 100e-6;    % magnetizing inductance, primary side (H)\nLk    = 0.5"
+"e-6;    % leakage inductance (H)\nCc    = 470e-9;    % clamp capacitor (F)\nV"
+"c0   = 0;         % clamp capacitor initial voltage (V)\nRds   = 10e-3;     %"
+" MOSFET on-resistance (Ohm)\nVf    = 0.4;       % rectifier diode forward vol"
+"tage (V)\nLo    = 22e-6;     % output inductor (H)\nCo    = 100e-6;    % outp"
+"ut capacitor (F)\nRload = 2;         % load resistance (Ohm)\n\n% Modulation"
+"\nfsw   = 200e3;     % switching frequency (Hz)\nD     = 0.4;       % final d"
+"uty cycle of S1\nTpre  = 0.3e-3;    % precharge: Vin ramp time, both gates he"
+"ld off (s)\nTss   = 1e-3;      % PWM soft-start ramp time after precharge (s)"
+"\ntdead = 100e-9;    % dead time between S1 and S2 (s)\n\n% Simulation\nTsim "
+" = 3e-3;      % simulation time (s)\n\n% Expected steady state (for reference"
+")\nVc_ss   = Vin/(1-D);     % low-side clamp capacitor voltage = peak drain v"
+"oltage\nVout_ss = Vin*D*Ns/Np;   % ideal forward-converter output\n"
+  InitialState  "1"
+  SystemState   ""
+  TaskingMode   "1"
+  TaskConfigurations ""
+  CodeGenParameterInlining "2"
+  CodeGenFloatingPointFormat "2"
+  CodeGenAbsTimeUsageMsg "3"
+  CodeGenBaseName ""
+  CodeGenOutputDir ""
+  CodeGenExtraOpts ""
+  CodeGenTarget "Generic"
+  CodeGenTargetSettings ""
+  ExtendedMatrixPrecision "1"
+  MatrixSignificanceCheck "2"
+  RemoveUnusedStateSpaceOutputs "2"
+  EnableStateSpaceSplitting "2"
+  DisplayStateSpaceSplitting "1"
+  DiscretizationMethod "2"
+  ExternalModeSettings ""
+  AlgebraicLoopMethod "1"
+  AlgebraicLoopTolerance "1e-6"
+  ScriptsDialogGeometry ""
+  ScriptsDialogSplitterPos "0"
+  Schematic {
+    Location      [0, 24; 1539, 825]
+    ZoomFactor    1
+    SliderPosition [0, 0]
+    ShowBrowser   off
+    BrowserWidth  100
+    Component {
+      Type          VoltageSource
+      Name          "Vin"
+      Show          on
+      Position      [160, 165]
+      Direction     down
+      Flipped       on
+      LabelPosition east
+      Parameter {
+        Variable      "DiscretizationBehavior"
+        Value         "2"
+        Show          off
+      }
+      Parameter {
+        Variable      "StateSpaceInlining"
+        Value         "1"
+        Show          off
+      }
+    }
+    Component {
+      Type          Inductor
+      Name          "Lk"
+      Show          on
+      Position      [280, 85]
+      Direction     left
+      Flipped       off
+      LabelPosition north
+      Parameter {
+        Variable      "L"
+        Value         "Lk"
+        Show          off
+      }
+      Parameter {
+        Variable      "i_init"
+        Value         "0"
+        Show          off
+      }
+    }
+    Component {
+      Type          Transformer
+      Name          "Tr"
+      Show          on
+      Position      [480, 100]
+      Direction     right
+      Flipped       on
+      LabelPosition south
+      Parameter {
+        Variable      "Windings"
+        Value         "[1 1]"
+        Show          off
+      }
+      Parameter {
+        Variable      "n"
+        Value         "[Np Ns]"
+        Show          off
+      }
+      Parameter {
+        Variable      "Polarity"
+        Value         "+"
+        Show          off
+      }
+      Parameter {
+        Variable      "Lm"
+        Value         "Lm"
+        Show          off
+      }
+      Parameter {
+        Variable      "im0"
+        Value         "0"
+        Show          off
+      }
+    }
+    Component {
+      Type          MosfetWithDiode
+      Name          "S1"
+      Show          on
+      Position      [405, 185]
+      Direction     up
+      Flipped       off
+      LabelPosition east
+      Parameter {
+        Variable      "Ron"
+        Value         "Rds"
+        Show          off
+      }
+      Parameter {
+        Variable      "s_init"
+        Value         "0"
+        Show          off
+      }
+      Parameter {
+        Variable      "thermal"
+        Value         ""
+        Show          off
+      }
+      Parameter {
+        Variable      "Rth"
+        Value         "0"
+        Show          off
+      }
+      Parameter {
+        Variable      "T_init"
+        Value         ""
+        Show          off
+      }
+    }
+    Component {
+      Type          Capacitor
+      Name          "Cc"
+      Show          on
+      Position      [270, 145]
+      Direction     down
+      Flipped       on
+      LabelPosition west
+      Parameter {
+        Variable      "C"
+        Value         "Cc"
+        Show          off
+      }
+      Parameter {
+        Variable      "v_init"
+        Value         "Vc0"
+        Show          off
+      }
+    }
+    Component {
+      Type          MosfetWithDiode
+      Name          "S2"
+      Show          on
+      Position      [270, 205]
+      Direction     down
+      Flipped       off
+      LabelPosition west
+      Parameter {
+        Variable      "Ron"
+        Value         "Rds"
+        Show          off
+      }
+      Parameter {
+        Variable      "s_init"
+        Value         "0"
+        Show          off
+      }
+      Parameter {
+        Variable      "thermal"
+        Value         ""
+        Show          off
+      }
+      Parameter {
+        Variable      "Rth"
+        Value         "0"
+        Show          off
+      }
+      Parameter {
+        Variable      "T_init"
+        Value         ""
+        Show          off
+      }
+    }
+    Component {
+      Type          Diode
+      Name          "Dfwd"
+      Show          on
+      Position      [540, 85]
+      Direction     right
+      Flipped       on
+      LabelPosition north
+      Parameter {
+        Variable      "Vf"
+        Value         "Vf"
+        Show          off
+      }
+      Parameter {
+        Variable      "Ron"
+        Value         "0"
+        Show          off
+      }
+      Parameter {
+        Variable      "thermal"
+        Value         ""
+        Show          off
+      }
+      Parameter {
+        Variable      "Rth"
+        Value         "0"
+        Show          off
+      }
+      Parameter {
+        Variable      "T_init"
+        Value         ""
+        Show          off
+      }
+      Parameter {
+        Variable      "SwitchModel"
+        Value         "1"
+        Show          off
+      }
+      Parameter {
+        Variable      "f_grid"
+        Value         "0"
+        Show          off
+      }
+    }
+    Component {
+      Type          Diode
+      Name          "Dfw"
+      Show          on
+      Position      [590, 165]
+      Direction     up
+      Flipped       on
+      LabelPosition west
+      Parameter {
+        Variable      "Vf"
+        Value         "Vf"
+        Show          off
+      }
+      Parameter {
+        Variable      "Ron"
+        Value         "0"
+        Show          off
+      }
+      Parameter {
+        Variable      "thermal"
+        Value         ""
+        Show          off
+      }
+      Parameter {
+        Variable      "Rth"
+        Value         "0"
+        Show          off
+      }
+      Parameter {
+        Variable      "T_init"
+        Value         ""
+        Show          off
+      }
+      Parameter {
+        Variable      "SwitchModel"
+        Value         "1"
+        Show          off
+      }
+      Parameter {
+        Variable      "f_grid"
+        Value         "0"
+        Show          off
+      }
+    }
+    Component {
+      Type          Inductor
+      Name          "Lo"
+      Show          on
+      Position      [640, 85]
+      Direction     left
+      Flipped       off
+      LabelPosition north
+      Parameter {
+        Variable      "L"
+        Value         "Lo"
+        Show          off
+      }
+      Parameter {
+        Variable      "i_init"
+        Value         "0"
+        Show          off
+      }
+    }
+    Component {
+      Type          Capacitor
+      Name          "Co"
+      Show          on
+      Position      [690, 165]
+      Direction     down
+      Flipped       on
+      LabelPosition west
+      Parameter {
+        Variable      "C"
+        Value         "Co"
+        Show          off
+      }
+      Parameter {
+        Variable      "v_init"
+        Value         "0"
+        Show          off
+      }
+    }
+    Component {
+      Type          Resistor
+      Name          "Rload"
+      Show          on
+      Position      [750, 165]
+      Direction     up
+      Flipped       off
+      LabelPosition east
+      Parameter {
+        Variable      "R"
+        Value         "Rload"
+        Show          off
+      }
+    }
+    Component {
+      Type          From
+      Name          "From1"
+      Show          off
+      Position      [355, 185]
+      Direction     right
+      Flipped       off
+      LabelPosition south
+      Parameter {
+        Variable      "Tag"
+        Value         "g1"
+        Show          off
+      }
+      Parameter {
+        Variable      "Visibility"
+        Value         "1"
+        Show          off
+      }
+      Parameter {
+        Variable      "NoMatchingCounterpartAction"
+        Value         "1"
+        Show          off
+      }
+    }
+    Component {
+      Type          From
+      Name          "From2"
+      Show          off
+      Position      [320, 205]
+      Direction     left
+      Flipped       off
+      LabelPosition north
+      Parameter {
+        Variable      "Tag"
+        Value         "g2"
+        Show          off
+      }
+      Parameter {
+        Variable      "Visibility"
+        Value         "1"
+        Show          off
+      }
+      Parameter {
+        Variable      "NoMatchingCounterpartAction"
+        Value         "1"
+        Show          off
+      }
+    }
+    Component {
+      Type          From
+      Name          "From3"
+      Show          off
+      Position      [120, 165]
+      Direction     right
+      Flipped       off
+      LabelPosition south
+      Parameter {
+        Variable      "Tag"
+        Value         "vin"
+        Show          off
+      }
+      Parameter {
+        Variable      "Visibility"
+        Value         "1"
+        Show          off
+      }
+      Parameter {
+        Variable      "NoMatchingCounterpartAction"
+        Value         "1"
+        Show          off
+      }
+    }
+    Component {
+      Type          Function
+      Name          "Input ramp"
+      Show          on
+      Position      [250, 285]
+      Direction     right
+      Flipped       off
+      LabelPosition south
+      Frame         [-35, -10; 35, 10]
+      Parameter {
+        Variable      "f(u)"
+        Value         "Vin*min(u/Tpre, 1)"
+        Show          off
+      }
+    }
+    Component {
+      Type          Goto
+      Name          "Goto3"
+      Show          off
+      Position      [520, 285]
+      Direction     right
+      Flipped       off
+      LabelPosition south
+      Parameter {
+        Variable      "Tag"
+        Value         "vin"
+        Show          off
+      }
+      Parameter {
+        Variable      "Visibility"
+        Value         "1"
+        Show          off
+      }
+      Parameter {
+        Variable      "NoMatchingCounterpartAction"
+        Value         "3"
+        Show          off
+      }
+    }
+    Component {
+      Type          Clock
+      Name          "Clock"
+      Show          on
+      Position      [160, 350]
+      Direction     right
+      Flipped       off
+      LabelPosition south
+    }
+    Component {
+      Type          Function
+      Name          "Soft-start\nduty"
+      Show          on
+      Position      [250, 350]
+      Direction     right
+      Flipped       off
+      LabelPosition south
+      Frame         [-35, -10; 35, 10]
+      Parameter {
+        Variable      "f(u)"
+        Value         "D*min(max(u - Tpre, 0)/Tss, 1)"
+        Show          off
+      }
+    }
+    Component {
+      Type          Function
+      Name          "Duty +\ndead time"
+      Show          on
+      Position      [250, 450]
+      Direction     right
+      Flipped       off
+      LabelPosition south
+      Frame         [-35, -10; 35, 10]
+      Parameter {
+        Variable      "f(u)"
+        Value         "D*min(max(u - Tpre, 0)/Tss, 1) + tdead*fsw + 2*(u < Tpr"
+"e)"
+        Show          off
+      }
+    }
+    Component {
+      Type          TriangleGenerator
+      Name          "Carrier"
+      Show          on
+      Position      [295, 400]
+      Direction     right
+      Flipped       off
+      LabelPosition south
+      Parameter {
+        Variable      "Min"
+        Value         "0"
+        Show          off
+      }
+      Parameter {
+        Variable      "Max"
+        Value         "1"
+        Show          off
+      }
+      Parameter {
+        Variable      "f"
+        Value         "fsw"
+        Show          off
+      }
+      Parameter {
+        Variable      "DutyCycle"
+        Value         "1"
+        Show          off
+      }
+      Parameter {
+        Variable      "Delay"
+        Value         "0"
+        Show          off
+      }
+    }
+    Component {
+      Type          RelationalOperator
+      Name          "d > carrier"
+      Show          on
+      Position      [370, 355]
+      Direction     right
+      Flipped       off
+      LabelPosition south
+      Parameter {
+        Variable      "Operator"
+        Value         "6"
+        Show          off
+      }
+    }
+    Component {
+      Type          RelationalOperator
+      Name          "carrier > d+dt"
+      Show          on
+      Position      [370, 445]
+      Direction     right
+      Flipped       off
+      LabelPosition south
+      Parameter {
+        Variable      "Operator"
+        Value         "6"
+        Show          off
+      }
+    }
+    Component {
+      Type          ConstantRelationalOperator
+      Name          "carrier < 1-dt"
+      Show          on
+      Position      [370, 505]
+      Direction     right
+      Flipped       off
+      LabelPosition south
+      Frame         [-20, -10; 20, 10]
+      Parameter {
+        Variable      "Operator"
+        Value         "3"
+        Show          off
+      }
+      Parameter {
+        Variable      "Threshold"
+        Value         "1 - tdead*fsw"
+        Show          off
+      }
+    }
+    Component {
+      Type          LogicalOperator
+      Name          "AND"
+      Show          off
+      Position      [450, 475]
+      Direction     up
+      Flipped       off
+      LabelPosition south
+      Parameter {
+        Variable      "Operator"
+        Value         "1"
+        Show          off
+      }
+      Parameter {
+        Variable      "Inputs"
+        Value         "2"
+        Show          off
+      }
+    }
+    Component {
+      Type          Goto
+      Name          "Goto1"
+      Show          off
+      Position      [520, 355]
+      Direction     right
+      Flipped       off
+      LabelPosition south
+      Parameter {
+        Variable      "Tag"
+        Value         "g1"
+        Show          off
+      }
+      Parameter {
+        Variable      "Visibility"
+        Value         "1"
+        Show          off
+      }
+      Parameter {
+        Variable      "NoMatchingCounterpartAction"
+        Value         "3"
+        Show          off
+      }
+    }
+    Component {
+      Type          Goto
+      Name          "Goto2"
+      Show          off
+      Position      [520, 475]
+      Direction     right
+      Flipped       off
+      LabelPosition south
+      Parameter {
+        Variable      "Tag"
+        Value         "g2"
+        Show          off
+      }
+      Parameter {
+        Variable      "Visibility"
+        Value         "1"
+        Show          off
+      }
+      Parameter {
+        Variable      "NoMatchingCounterpartAction"
+        Value         "3"
+        Show          off
+      }
+    }
+    Component {
+      Type          PlecsProbe
+      Name          "Gates"
+      Show          on
+      Position      [650, 305]
+      Direction     right
+      Flipped       off
+      LabelPosition south
+      Probe {
+        Component     "S1"
+        Path          ""
+        Signals       {"Device gate input"}
+      }
+      Probe {
+        Component     "S2"
+        Path          ""
+        Signals       {"Device gate input"}
+      }
+    }
+    Component {
+      Type          PlecsProbe
+      Name          "v_ds, v_Cc, v_in"
+      Show          on
+      Position      [650, 365]
+      Direction     right
+      Flipped       off
+      LabelPosition south
+      Probe {
+        Component     "S1"
+        Path          ""
+        Signals       {"Device voltage"}
+      }
+      Probe {
+        Component     "Cc"
+        Path          ""
+        Signals       {"Capacitor voltage"}
+      }
+      Probe {
+        Component     "Vin"
+        Path          ""
+        Signals       {"Source voltage"}
+      }
+    }
+    Component {
+      Type          PlecsProbe
+      Name          "i_pri"
+      Show          on
+      Position      [650, 425]
+      Direction     right
+      Flipped       off
+      LabelPosition south
+      Probe {
+        Component     "Lk"
+        Path          ""
+        Signals       {"Inductor current"}
+      }
+    }
+    Component {
+      Type          PlecsProbe
+      Name          "i_Lo"
+      Show          on
+      Position      [650, 485]
+      Direction     right
+      Flipped       off
+      LabelPosition south
+      Probe {
+        Component     "Lo"
+        Path          ""
+        Signals       {"Inductor current"}
+      }
+    }
+    Component {
+      Type          PlecsProbe
+      Name          "v_out"
+      Show          on
+      Position      [650, 545]
+      Direction     right
+      Flipped       off
+      LabelPosition south
+      Probe {
+        Component     "Co"
+        Path          ""
+        Signals       {"Capacitor voltage"}
+      }
+    }
+    Component {
+      Type          Scope
+      Name          "Scope"
+      Show          on
+      Position      [800, 425]
+      Direction     up
+      Flipped       off
+      LabelPosition south
+      Location      [100, 100; 1100, 900]
+      State         ""
+      SavedViews    ""
+      HeaderState   ""
+      PlotPalettes  ""
+      Axes          "5"
+      TimeRange     "0"
+      ScrollingMode "1"
+      SingleTimeAxis "1"
+      Open          "0"
+      Ts            "-1"
+      SampleLimit   "0"
+      XAxisLabel    "Time / s"
+      ShowLegend    "1"
+      Axis {
+        Name          "Gate signals"
+        AutoScale     1
+        MinValue      0
+        MaxValue      1
+        Signals       {}
+        SignalTypes   [ ]
+        Untangle      0
+        KeepBaseline  off
+        BaselineValue 0
+      }
+      Axis {
+        Name          "Drain & clamp voltage"
+        AutoScale     1
+        MinValue      0
+        MaxValue      1
+        Signals       {}
+        SignalTypes   [ ]
+        AxisLabel     "Voltage / V"
+        Untangle      0
+        KeepBaseline  off
+        BaselineValue 0
+      }
+      Axis {
+        Name          "Primary current"
+        AutoScale     1
+        MinValue      0
+        MaxValue      1
+        Signals       {}
+        SignalTypes   [ ]
+        AxisLabel     "Current / A"
+        Untangle      0
+        KeepBaseline  off
+        BaselineValue 0
+      }
+      Axis {
+        Name          "Output inductor current"
+        AutoScale     1
+        MinValue      0
+        MaxValue      1
+        Signals       {}
+        SignalTypes   [ ]
+        AxisLabel     "Current / A"
+        Untangle      0
+        KeepBaseline  off
+        BaselineValue 0
+      }
+      Axis {
+        Name          "Output voltage"
+        AutoScale     1
+        MinValue      0
+        MaxValue      1
+        Signals       {}
+        SignalTypes   [ ]
+        AxisLabel     "Voltage / V"
+        Untangle      0
+        KeepBaseline  off
+        BaselineValue 0
+      }
+      Fourier {
+        SingleXAxis       on
+        AxisLabel         "Frequency / Hz"
+        Scaling           0
+        PhaseDisplay      0
+        ShowFourierLegend off
+        Axis {
+          Name          ""
+          AutoScale     1
+          MinValue      0
+          MaxValue      1
+          Signals       {}
+          Untangle      0
+          KeepBaseline  off
+          BaselineValue 0
+        }
+        Axis {
+          Name          ""
+          AutoScale     1
+          MinValue      0
+          MaxValue      1
+          Signals       {}
+          Untangle      0
+          KeepBaseline  off
+          BaselineValue 0
+        }
+        Axis {
+          Name          ""
+          AutoScale     1
+          MinValue      0
+          MaxValue      1
+          Signals       {}
+          Untangle      0
+          KeepBaseline  off
+          BaselineValue 0
+        }
+        Axis {
+          Name          ""
+          AutoScale     1
+          MinValue      0
+          MaxValue      1
+          Signals       {}
+          Untangle      0
+          KeepBaseline  off
+          BaselineValue 0
+        }
+        Axis {
+          Name          ""
+          AutoScale     1
+          MinValue      0
+          MaxValue      1
+          Signals       {}
+          Untangle      0
+          KeepBaseline  off
+          BaselineValue 0
+        }
+      }
+    }
+    Connection {
+      Type          Wire
+      SrcComponent  "Vin"
+      SrcTerminal   1
+      Points        [160, 85]
+      DstComponent  "Lk"
+      DstTerminal   1
+    }
+    Connection {
+      Type          Wire
+      SrcComponent  "Lk"
+      SrcTerminal   2
+      DstComponent  "Tr"
+      DstTerminal   1
+    }
+    Connection {
+      Type          Wire
+      SrcComponent  "Tr"
+      SrcTerminal   2
+      Points        [405, 115]
+      Branch {
+        DstComponent  "S1"
+        DstTerminal   1
+      }
+      Branch {
+        Points        [270, 115]
+        DstComponent  "Cc"
+        DstTerminal   1
+      }
+    }
+    Connection {
+      Type          Wire
+      SrcComponent  "Cc"
+      SrcTerminal   2
+      DstComponent  "S2"
+      DstTerminal   2
+    }
+    Connection {
+      Type          Wire
+      SrcComponent  "Vin"
+      SrcTerminal   2
+      Points        [160, 245; 270, 245]
+      Branch {
+        DstComponent  "S2"
+        DstTerminal   1
+      }
+      Branch {
+        Points        [405, 245]
+        DstComponent  "S1"
+        DstTerminal   2
+      }
+    }
+    Connection {
+      Type          Wire
+      SrcComponent  "Tr"
+      SrcTerminal   3
+      DstComponent  "Dfwd"
+      DstTerminal   1
+    }
+    Connection {
+      Type          Wire
+      SrcComponent  "Dfwd"
+      SrcTerminal   2
+      Points        [590, 85]
+      Branch {
+        DstComponent  "Dfw"
+        DstTerminal   2
+      }
+      Branch {
+        DstComponent  "Lo"
+        DstTerminal   1
+      }
+    }
+    Connection {
+      Type          Wire
+      SrcComponent  "Lo"
+      SrcTerminal   2
+      Points        [690, 85]
+      Branch {
+        DstComponent  "Co"
+        DstTerminal   1
+      }
+      Branch {
+        Points        [750, 85]
+        DstComponent  "Rload"
+        DstTerminal   1
+      }
+    }
+    Connection {
+      Type          Wire
+      SrcComponent  "Tr"
+      SrcTerminal   4
+      Points        [510, 115; 510, 245; 590, 245]
+      Branch {
+        DstComponent  "Dfw"
+        DstTerminal   1
+      }
+      Branch {
+        Points        [690, 245]
+        Branch {
+          DstComponent  "Co"
+          DstTerminal   2
+        }
+        Branch {
+          Points        [750, 245]
+          DstComponent  "Rload"
+          DstTerminal   2
+        }
+      }
+    }
+    Connection {
+      Type          Signal
+      SrcComponent  "From1"
+      SrcTerminal   1
+      DstComponent  "S1"
+      DstTerminal   3
+    }
+    Connection {
+      Type          Signal
+      SrcComponent  "From2"
+      SrcTerminal   1
+      DstComponent  "S2"
+      DstTerminal   3
+    }
+    Connection {
+      Type          Signal
+      SrcComponent  "Clock"
+      SrcTerminal   1
+      Points        [195, 350]
+      Branch {
+        Points        [195, 285]
+        DstComponent  "Input ramp"
+        DstTerminal   1
+      }
+      Branch {
+        DstComponent  "Soft-start\nduty"
+        DstTerminal   1
+      }
+      Branch {
+        Points        [195, 450]
+        DstComponent  "Duty +\ndead time"
+        DstTerminal   1
+      }
+    }
+    Connection {
+      Type          Signal
+      SrcComponent  "Soft-start\nduty"
+      SrcTerminal   2
+      DstComponent  "d > carrier"
+      DstTerminal   1
+    }
+    Connection {
+      Type          Signal
+      SrcComponent  "Carrier"
+      SrcTerminal   1
+      Points        [330, 400]
+      Branch {
+        Points        [330, 360]
+        DstComponent  "d > carrier"
+        DstTerminal   2
+      }
+      Branch {
+        Points        [330, 440]
+        Branch {
+          DstComponent  "carrier > d+dt"
+          DstTerminal   1
+        }
+        Branch {
+          Points        [330, 505]
+          DstComponent  "carrier < 1-dt"
+          DstTerminal   1
+        }
+      }
+    }
+    Connection {
+      Type          Signal
+      SrcComponent  "Duty +\ndead time"
+      SrcTerminal   2
+      DstComponent  "carrier > d+dt"
+      DstTerminal   2
+    }
+    Connection {
+      Type          Signal
+      SrcComponent  "carrier > d+dt"
+      SrcTerminal   3
+      Points        [410, 445; 410, 470]
+      DstComponent  "AND"
+      DstTerminal   2
+    }
+    Connection {
+      Type          Signal
+      SrcComponent  "carrier < 1-dt"
+      SrcTerminal   2
+      Points        [410, 505; 410, 480]
+      DstComponent  "AND"
+      DstTerminal   3
+    }
+    Connection {
+      Type          Signal
+      SrcComponent  "d > carrier"
+      SrcTerminal   3
+      DstComponent  "Goto1"
+      DstTerminal   1
+    }
+    Connection {
+      Type          Signal
+      SrcComponent  "AND"
+      SrcTerminal   1
+      DstComponent  "Goto2"
+      DstTerminal   1
+    }
+    Connection {
+      Type          Signal
+      SrcComponent  "Gates"
+      SrcTerminal   1
+      Points        [750, 305; 750, 405]
+      DstComponent  "Scope"
+      DstTerminal   1
+    }
+    Connection {
+      Type          Signal
+      SrcComponent  "v_ds, v_Cc, v_in"
+      SrcTerminal   1
+      Points        [740, 365; 740, 415]
+      DstComponent  "Scope"
+      DstTerminal   2
+    }
+    Connection {
+      Type          Signal
+      SrcComponent  "i_pri"
+      SrcTerminal   1
+      DstComponent  "Scope"
+      DstTerminal   3
+    }
+    Connection {
+      Type          Signal
+      SrcComponent  "i_Lo"
+      SrcTerminal   1
+      Points        [740, 485; 740, 435]
+      DstComponent  "Scope"
+      DstTerminal   4
+    }
+    Connection {
+      Type          Signal
+      SrcComponent  "v_out"
+      SrcTerminal   1
+      Points        [750, 545; 750, 445]
+      DstComponent  "Scope"
+      DstTerminal   5
+    }
+    Connection {
+      Type          Signal
+      SrcComponent  "From3"
+      SrcTerminal   1
+      DstComponent  "Vin"
+      DstTerminal   3
+    }
+    Connection {
+      Type          Signal
+      SrcComponent  "Input ramp"
+      SrcTerminal   2
+      DstComponent  "Goto3"
+      DstTerminal   1
+    }
+  }
+}
